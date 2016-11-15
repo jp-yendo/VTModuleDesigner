@@ -1744,12 +1744,12 @@ function md_setFilterSequence(filter_id, index)
 
 function md_makePackage(installModule)
 {
-	//if(md_entityIdentifier == undefined)
-	//{
-	//	alert(md_vtranslate('LBL_YOU_MUST_DEFINE_A_FIELD_AS_IDENTIFIER'));
-	//	$("#md-tab-blocks-fields").click();
-	//	return;
-	//}
+	if(md_entityIdentifier == undefined)
+	{
+		alert(md_vtranslate('LBL_YOU_MUST_DEFINE_A_FIELD_AS_IDENTIFIER'));
+		$("#md-tab-blocks-fields").click();
+		return;
+	}
 
 	var md_moduleName				= jmd_container.find("input[name='module_name']").val();
 	var md_moduleLabel				= jmd_container.find("input[name='module_name']").val(); //TODO: add a field label
