@@ -148,6 +148,22 @@ class Vtiger_PackageExport {
 		if(is_dir("layouts/vlayout/modules/Settings/$module"))
 			$zip->copyDirectoryFromDisk ("layouts/vlayout/modules/Settings/$module", "settings/templates");
 
+                //Support to multiple layouts of module
+                $layoutDirectories = glob('layouts' . '/*', GLOB_ONLYDIR);
+                
+                foreach ($layoutDirectories as $key => $layoutName) {
+                    $moduleLayout = $layoutName."/modules/$module";
+                    if(is_dir($moduleLayout)){
+                        $zip->copyDirectoryFromDisk ($moduleLayout, $moduleLayout);
+                    }
+                    
+                    $settingsLayout = $layoutName."/modules/Settings/$module";
+                    if(is_dir($settingsLayout)){
+                        $zip->copyDirectoryFromDisk ($settingsLayout, $settingsLayout);
+                    }
+                }
+
+
 		//Copy language files
 		$this->__copyLanguageFiles($zip, $module);
 		
@@ -369,8 +385,9 @@ class Vtiger_PackageExport {
 
 		$this->openNode('blocks');
 		for($index = 0; $index < $resultrows; ++$index) {
-			$blockid    = $adb->query_result($sqlresult, $index,'blockid');
-			$blocklabel = $adb->query_result($sqlresult, $index,'blocklabel');
+			$blockid    = $adb->query_result($sqlresult, $index, 'blockid');
+			$blocklabel = $adb->query_result($sqlresult, $index, 'blocklabel');
+
 			$block_sequence  = $adb->query_result($sqlresult, $index,'sequence');
 			$block_show_title  = $adb->query_result($sqlresult, $index,'show_title');
 			$block_visible  = $adb->query_result($sqlresult, $index,'visible');
@@ -382,7 +399,8 @@ class Vtiger_PackageExport {
 			$block_islist = $adb->query_result($sqlresult, $index,'islist');
 					
 			$this->openNode('block');
-			$this->outputNode($blocklabel,'label');
+			$this->outputNode($blocklabel, 'label');
+
 			$this->outputNode($block_sequence ,'sequence');
 			$this->outputNode($block_show_title ,'show_title');
 			$this->outputNode($block_visible ,'visible');
@@ -434,7 +452,7 @@ class Vtiger_PackageExport {
 			
 			$info_schemarow = $adb->fetch_row($info_schema);
 			
-			$this->outputNode($fieldname, 'fieldname');	
+			$this->outputNode($fieldname, 'fieldname');
 			$this->outputNode($uitype,    'uitype');
 			$this->outputNode($fieldresultrow['columnname'],'columnname');
 			$this->outputNode($info_schemarow['column_type'],'columntype');

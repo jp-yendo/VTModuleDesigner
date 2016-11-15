@@ -46,7 +46,8 @@ class Vtiger_PackageUpdate extends Vtiger_PackageImport {
             $unzip->unzipAllEx( ".",
                     Array(
                     'include' => Array('templates', "modules/$module", 'cron', 'languages',
-						'settings/actions', 'settings/views', 'settings/models', 'settings/templates', 'settings/connectors', 'settings/libraries'),
+						'settings/actions', 'settings/views', 'settings/models', 'settings/templates', 'settings/connectors', 'settings/libraries',
+                                                'layouts'),
 					// DEFAULT: excludes all not in include
                     ),
 
@@ -66,6 +67,7 @@ class Vtiger_PackageUpdate extends Vtiger_PackageImport {
 						// Settings templates folder
 						'settings/templates' => "layouts/vlayout/modules/Settings/$module",
                                                 'settings' => "modules/Settings",
+                                                'layouts' => 'layouts' 
                     )   
             );
 
@@ -352,7 +354,7 @@ class Vtiger_PackageUpdate extends Vtiger_PackageImport {
 			$fieldInstance->columntype = NULL;
 		}
     	
-    	if(!empty($fieldnode->helpinfo)) $fieldInstance->setHelpInfo($fieldnode->helpinfo);
+        if(!empty($fieldnode->helpinfo)) $fieldInstance->setHelpInfo($fieldnode->helpinfo);
         if(!empty($fieldnode->masseditable)) $fieldInstance->setMassEditable($fieldnode->masseditable);
         if(!empty($fieldnode->summaryfield)) $fieldInstance->setSummaryField($fieldnode->summaryfield); 
     	

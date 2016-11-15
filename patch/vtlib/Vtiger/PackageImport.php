@@ -86,7 +86,7 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 	}
 
 	/**
-	 * Are we trying to import language package?
+	 * Are we trying to import layout package?
 	 */
 	function isLanguageType($zipfile =null) {
 		if(!empty($zipfile)) {
@@ -317,8 +317,8 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 	 */
 	function initImport($zipfile, $overwrite=true) {
 		$module = $this->getModuleNameFromZip($zipfile);
-		
 		if($module != null) {
+
 			$unzip = new Vtiger_Unzip($zipfile, $overwrite);
 
 			// Unzip selectively
@@ -327,7 +327,7 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 					// Include only file/folders that need to be extracted
 					'include' => Array('templates', "modules/$module", 'cron', 'languages',
 						'settings/actions', 'settings/views', 'settings/models', 'settings/templates', 'settings/connectors', 'settings/libraries',
-						"$module.png"),
+						"$module.png", 'layouts'),
 					// NOTE: If excludes is not given then by those not mentioned in include are ignored.
 				),
 				// What files needs to be renamed?
@@ -347,9 +347,10 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
                                         //module images
 					'images' => "layouts/vlayout/skins/images/$module",
                                         'settings' => "modules/Settings",
+                                        'layouts' => 'layouts' 
 				)
 			);
-			
+
 			if($unzip->checkFileExistsInRootFolder("$module.png")) {
 				$unzip->unzip("$module.png", "layouts/vlayout/skins/images/$module.png");
 			}
@@ -428,7 +429,6 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 	 */
 	function import($zipfile, $overwrite=false) {
 		$module = $this->getModuleNameFromZip($zipfile);
-		
 		if($module != null) {
 			// If data is not yet available
 			if(empty($this->_modulexml)) {
@@ -496,8 +496,6 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 		$moduleInstance->maxversion = (!$vtigerMaxVersion)?  false : $vtigerMaxVersion;
 		$moduleInstance->save();
 
-		$moduleInstance->initWebservice();
-
 		if(!empty($parenttab)) {
 			$menuInstance = Vtiger_Menu::getInstance($parenttab);
 			
@@ -518,6 +516,8 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 
 		Vtiger_Module::fireEvent($moduleInstance->name,
 			Vtiger_Module::EVENT_MODULE_POSTINSTALL);
+
+		$moduleInstance->initWebservice();
 	}
 
 	/**
@@ -614,6 +614,7 @@ class Vtiger_PackageImport extends Vtiger_PackageExport {
 		} else {
 			$blockInstance->display_status = NULL;
 		}
+
 		$moduleInstance->addBlock($blockInstance);
 		return $blockInstance;
 	}
